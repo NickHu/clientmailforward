@@ -5,20 +5,21 @@
     inputs.rust-flake.flakeModules.nixpkgs
   ];
   perSystem =
-    {
-      self',
-      pkgs,
-      lib,
-      ...
+    { self'
+    , pkgs
+    , lib
+    , ...
     }:
     {
       rust-project.crates."clientmailforward".crane.args = {
-        buildInputs = lib.optionals pkgs.stdenv.isDarwin (
-          with pkgs.darwin.apple_sdk.frameworks;
-          [
-            IOKit
-          ]
-        );
+        buildInputs =
+          [ pkgs.openssl ]
+          ++ lib.optionals pkgs.stdenv.isDarwin (
+            with pkgs.darwin.apple_sdk.frameworks;
+            [
+              IOKit
+            ]
+          );
       };
       packages.default = self'.packages.clientmailforward;
     };
